@@ -1,0 +1,27 @@
+{
+    "flutter": {
+      "platforms": {
+        "android": {
+          "default": {
+            "projectId": "wheels-app-updated",
+            "appId": "1:544084308758:android:8a5d2ae1a48e6130929637",
+            "fileOutput": "android/app/google-services.json"
+          }
+        },
+        "dart": {
+          "lib/firebase_options.dart": {
+            "projectId": "wheels-app-updated",
+            "configurations": {
+              "android": "1:544084308758:android:8a5d2ae1a48e6130929637",
+              "ios": "1:544084308758:ios:bcaa37da921cef61929637",
+              "macos": "1:544084308758:ios:bcaa37da921cef61929637",
+              "web": "1:544084308758:web:c03a9dab764beef6929637",
+              "windows": "1:544084308758:web:2da237642f1b42e3929637"
+            }
+          }
+        }
+      }
+    }
+    
+  }
+  

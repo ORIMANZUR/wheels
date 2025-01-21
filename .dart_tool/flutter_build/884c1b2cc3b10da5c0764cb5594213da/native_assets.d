@@ -1,0 +1,1 @@
+ C:\\Users\\orida\\Desktop\\wheels_app\\.dart_tool\\flutter_build\\884c1b2cc3b10da5c0764cb5594213da\\native_assets.yaml: 

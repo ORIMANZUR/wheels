@@ -1,0 +1,13 @@
+com.example.wheels_app-core-1.6.0-0 C:\Users\orida\.gradle\caches\transforms-3\284a410c767ad6c7a2b0ffc8d8d85981\transformed\core-1.6.0\res
+com.example.wheels_app-jetified-window-java-1.0.0-beta04-1 C:\Users\orida\.gradle\caches\transforms-3\2a215381204751055df81b6269e717b7\transformed\jetified-window-java-1.0.0-beta04\res
+com.example.wheels_app-jetified-annotation-experimental-1.1.0-2 C:\Users\orida\.gradle\caches\transforms-3\3d2f03fc996c2e0aa3dee5cfa3002cd1\transformed\jetified-annotation-experimental-1.1.0\res
+com.example.wheels_app-jetified-window-1.0.0-beta04-3 C:\Users\orida\.gradle\caches\transforms-3\f302e75fb7efd781bcf1a29281c188da\transformed\jetified-window-1.0.0-beta04\res
+com.example.wheels_app-main-4 C:\Users\orida\Desktop\wheels_app\android\app\src\main\res
+com.example.wheels_app-release-5 C:\Users\orida\Desktop\wheels_app\android\app\src\release\res
+com.example.wheels_app-pngs-6 C:\Users\orida\Desktop\wheels_app\build\app\generated\res\pngs\release
+com.example.wheels_app-resValues-7 C:\Users\orida\Desktop\wheels_app\build\app\generated\res\resValues\release
+com.example.wheels_app-rs-8 C:\Users\orida\Desktop\wheels_app\build\app\generated\res\rs\release
+com.example.wheels_app-mergeReleaseResources-9 C:\Users\orida\Desktop\wheels_app\build\app\intermediates\incremental\release\mergeReleaseResources\merged.dir
+com.example.wheels_app-mergeReleaseResources-10 C:\Users\orida\Desktop\wheels_app\build\app\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+com.example.wheels_app-merged_res-11 C:\Users\orida\Desktop\wheels_app\build\app\intermediates\merged_res\release
+com.example.wheels_app-packaged_res-12 C:\Users\orida\Desktop\wheels_app\build\path_provider_android\intermediates\packaged_res\release
