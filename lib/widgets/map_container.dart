@@ -21,9 +21,12 @@ class _MapContainerState extends State<MapContainer>
   late AnimationController _animationController;
   Animation<double>? _heightAnimation;
   List<Ride> _availableRides = [];
+  List<Ride> _filteredRides = [];
 
-  // Initial camera position (default to Tel Aviv)
-  static const LatLng _defaultLocation = LatLng(32.0853, 34.7818);
+  // Filter states
+  bool _showTodayOnly = false;
+  bool _showAvailableOnly = true;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -38,7 +41,6 @@ class _MapContainerState extends State<MapContainer>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Initialize the animation here where we have access to MediaQuery
     _heightAnimation = Tween<double>(
       begin: 300,
       end: MediaQuery.of(context).size.height * 0.85,
@@ -48,11 +50,64 @@ class _MapContainerState extends State<MapContainer>
     ));
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _mapController?.dispose();
-    super.dispose();
+  void _filterRides() {
+    setState(() {
+      _filteredRides = _availableRides.where((ride) {
+        // Apply search filter
+        if (_searchQuery.isNotEmpty) {
+          final searchLower = _searchQuery.toLowerCase();
+          if (!ride.pickupAddress.toLowerCase().contains(searchLower) &&
+              !ride.dropoffAddress.toLowerCase().contains(searchLower)) {
+            return false;
+          }
+        }
+
+        // Apply today filter
+        if (_showTodayOnly) {
+          final today = DateTime.now();
+          final rideDate = ride.scheduledTime;
+          if (rideDate.year != today.year ||
+              rideDate.month != today.month ||
+              rideDate.day != today.day) {
+            return false;
+          }
+        }
+
+        // Apply available seats filter
+        if (_showAvailableOnly && ride.isFull()) {
+          return false;
+        }
+
+        return true;
+      }).toList();
+
+      // Update markers based on filtered rides
+      _updateMapMarkers();
+    });
+  }
+
+  void _updateMapMarkers() {
+    _markers.clear();
+    for (var ride in _filteredRides) {
+      final availableSeats = ride.seats - (ride.passengers?.length ?? 0);
+      _markers.add(
+        Marker(
+          markerId: MarkerId(ride.id),
+          position: LatLng(
+            ride.pickupLocation.latitude,
+            ride.pickupLocation.longitude,
+          ),
+          infoWindow: InfoWindow(
+            title: 'To: ${ride.dropoffAddress}',
+            snippet: '${availableSeats}/${ride.seats} seats available',
+            onTap: () => _onMarkerTapped(ride),
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(availableSeats == 1
+              ? BitmapDescriptor.hueOrange
+              : BitmapDescriptor.hueBlue),
+        ),
+      );
+    }
   }
 
   Future<void> _loadRides() async {
@@ -61,55 +116,14 @@ class _MapContainerState extends State<MapContainer>
       if (mounted) {
         setState(() {
           _availableRides = rides;
-          _markers.clear();
-          for (var ride in rides) {
-            final availableSeats = ride.seats - (ride.passengers?.length ?? 0);
-            _markers.add(
-              Marker(
-                markerId: MarkerId(ride.id),
-                position: LatLng(
-                  ride.pickupLocation.latitude,
-                  ride.pickupLocation.longitude,
-                ),
-                infoWindow: InfoWindow(
-                  title: 'To: ${ride.dropoffAddress}',
-                  snippet: '${availableSeats}/${ride.seats} seats available',
-                  onTap: () => _onMarkerTapped(ride),
-                ),
-                icon: BitmapDescriptor.defaultMarkerWithHue(availableSeats == 1
-                    ? BitmapDescriptor.hueOrange
-                    : BitmapDescriptor.hueBlue),
-              ),
-            );
-          }
+          _filterRides(); // This will update _filteredRides and markers
         });
-      }
-    });
-  }
-
-  void _onMarkerTapped(Ride ride) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RideDetailsScreen(ride: ride),
-      ),
-    );
-  }
-
-  void _toggleExpanded() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-      if (_isExpanded) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // If _heightAnimation is null, return a container with fixed height
     if (_heightAnimation == null) {
       return Container(height: 300);
     }
@@ -121,10 +135,9 @@ class _MapContainerState extends State<MapContainer>
           height: _heightAnimation!.value,
           child: Stack(
             children: [
-              // Map
               GoogleMap(
                 initialCameraPosition: const CameraPosition(
-                  target: _defaultLocation,
+                  target: LatLng(32.0853, 34.7818), // Tel Aviv
                   zoom: 12,
                 ),
                 onMapCreated: (controller) {
@@ -140,39 +153,6 @@ class _MapContainerState extends State<MapContainer>
                 myLocationButtonEnabled: true,
               ),
 
-              // Expand/Collapse Button
-              Positioned(
-                bottom: _isExpanded ? 16 : 0,
-                left: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: _toggleExpanded,
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(_isExpanded ? 0 : 20),
-                        bottom: Radius.circular(_isExpanded ? 20 : 0),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, -2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      _isExpanded
-                          ? Icons.keyboard_arrow_down
-                          : Icons.keyboard_arrow_up,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-              ),
-
               // Search and Filter UI
               if (!_isExpanded)
                 Positioned(
@@ -185,58 +165,86 @@ class _MapContainerState extends State<MapContainer>
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
+                          // Search TextField
                           TextField(
                             decoration: const InputDecoration(
                               prefixIcon:
                                   Icon(Icons.search, color: Colors.grey),
-                              hintText: 'Search for a ride...',
+                              hintText: 'Search by location...',
                               border: InputBorder.none,
                             ),
                             onChanged: (value) {
-                              // Implement search functionality
+                              setState(() {
+                                _searchQuery = value;
+                                _filterRides();
+                              });
                             },
                           ),
                           const SizedBox(height: 8),
+
+                          // Filter Chips
                           Row(
                             children: [
                               FilterChip(
+                                selected: _showTodayOnly,
                                 label: Row(
                                   children: [
                                     Icon(
                                       Icons.access_time,
                                       size: 16,
-                                      color: Colors.blue.shade700,
+                                      color: _showTodayOnly
+                                          ? Colors.white
+                                          : Colors.blue.shade700,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Today',
                                       style: TextStyle(
-                                          color: Colors.blue.shade700),
+                                          color: _showTodayOnly
+                                              ? Colors.white
+                                              : Colors.blue.shade700),
                                     ),
                                   ],
                                 ),
                                 backgroundColor: Colors.blue.shade50,
-                                onSelected: (bool value) {},
+                                selectedColor: Colors.blue.shade400,
+                                onSelected: (bool value) {
+                                  setState(() {
+                                    _showTodayOnly = value;
+                                    _filterRides();
+                                  });
+                                },
                               ),
                               const SizedBox(width: 8),
                               FilterChip(
+                                selected: _showAvailableOnly,
                                 label: Row(
                                   children: [
                                     Icon(
                                       Icons.event_seat,
                                       size: 16,
-                                      color: Colors.blue.shade700,
+                                      color: _showAvailableOnly
+                                          ? Colors.white
+                                          : Colors.blue.shade700,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Available',
                                       style: TextStyle(
-                                          color: Colors.blue.shade700),
+                                          color: _showAvailableOnly
+                                              ? Colors.white
+                                              : Colors.blue.shade700),
                                     ),
                                   ],
                                 ),
                                 backgroundColor: Colors.blue.shade50,
-                                onSelected: (bool value) {},
+                                selectedColor: Colors.blue.shade400,
+                                onSelected: (bool value) {
+                                  setState(() {
+                                    _showAvailableOnly = value;
+                                    _filterRides();
+                                  });
+                                },
                               ),
                             ],
                           ),
@@ -265,10 +273,52 @@ class _MapContainerState extends State<MapContainer>
                     ],
                   ),
                   child: Text(
-                    '${_availableRides.length} Available Rides',
+                    '${_filteredRides.length} Available Rides',
                     style: TextStyle(
                       color: Colors.blue.shade700,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Expand/Collapse Button
+              Positioned(
+                bottom: _isExpanded ? 16 : 0,
+                left: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                      if (_isExpanded) {
+                        _animationController.forward();
+                      } else {
+                        _animationController.reverse();
+                      }
+                    });
+                  },
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(_isExpanded ? 0 : 20),
+                        bottom: Radius.circular(_isExpanded ? 20 : 0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      _isExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_up,
+                      color: Colors.grey[600],
                     ),
                   ),
                 ),
@@ -277,6 +327,15 @@ class _MapContainerState extends State<MapContainer>
           ),
         );
       },
+    );
+  }
+
+  void _onMarkerTapped(Ride ride) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RideDetailsScreen(ride: ride),
+      ),
     );
   }
 
@@ -295,5 +354,12 @@ class _MapContainerState extends State<MapContainer>
     ]
     ''';
     _mapController?.setMapStyle(style);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _mapController?.dispose();
+    super.dispose();
   }
 }

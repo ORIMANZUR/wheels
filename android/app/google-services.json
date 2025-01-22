@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "544084308758",
-    "project_id": "wheels-app-updated",
-    "storage_bucket": "wheels-app-updated.firebasestorage.app"
+    "project_number": "826213863049",
+    "project_id": "wheels-new-app",
+    "storage_bucket": "wheels-new-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:544084308758:android:8a5d2ae1a48e6130929637",
+        "mobilesdk_app_id": "1:826213863049:android:b79b2c46817d57ca514058",
         "android_client_info": {
-          "package_name": "com.example.wheels_app"
+          "package_name": "com.orimanzur.wheels_app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAahODFrZU-VFFfsykyKez5W-K_5LEMQ-I"
+          "current_key": "AIzaSyDEU0Mp8HWSiC0uJSDYTR1LjLrRB48l6P8"
         }
       ],
       "services": {

@@ -169,8 +169,12 @@ class RidesService {
   }
 
   // Cancel ride
+
   Future<void> cancelRide(String rideId, String reason) async {
     try {
+      final currentUser = authService.currentUser;
+      if (currentUser == null) throw 'User not authenticated';
+
       await _firestore.runTransaction((transaction) async {
         final rideDoc =
             await transaction.get(_firestore.collection('rides').doc(rideId));
@@ -179,10 +183,17 @@ class RidesService {
           throw 'Ride not found';
         }
 
-        // Get passengers to refund tokens
+        // Check if user is authorized to cancel
+        final isDriver = rideDoc.data()?['driver_id'] == currentUser.uid;
         final passengers =
             List<String>.from(rideDoc.data()?['passengers'] ?? []);
+        final isPassenger = passengers.contains(currentUser.uid);
 
+        if (!isDriver && !isPassenger) {
+          throw 'Not authorized to cancel this ride';
+        }
+
+        // Proceed with cancellation if authorized
         // Refund tokens to passengers
         for (final passengerId in passengers) {
           transaction.update(
@@ -198,10 +209,57 @@ class RidesService {
         transaction.update(rideDoc.reference, {
           'status': RideStatus.cancelled.toString().split('.').last,
           'cancel_reason': reason,
+          'cancelled_by': currentUser.uid, // Track who cancelled the ride
+          'cancelled_at': FieldValue.serverTimestamp(),
         });
       });
     } catch (e) {
       throw 'Failed to cancel ride: $e';
+    }
+  }
+
+  // In RidesService class, add leaveRide method:
+
+  Future<void> leaveRide(String rideId, String passengerId) async {
+    try {
+      await _firestore.runTransaction((transaction) async {
+        final rideDoc =
+            await transaction.get(_firestore.collection('rides').doc(rideId));
+        final userDoc = await transaction
+            .get(_firestore.collection('users').doc(passengerId));
+
+        if (!rideDoc.exists || !userDoc.exists) {
+          throw 'Ride or user not found';
+        }
+
+        final passengers =
+            List<String>.from(rideDoc.data()?['passengers'] ?? []);
+        if (!passengers.contains(passengerId)) {
+          throw 'User is not a passenger in this ride';
+        }
+
+        // Remove passenger from ride
+        transaction.update(rideDoc.reference, {
+          'passengers': FieldValue.arrayRemove([passengerId]),
+        });
+
+        // Refund token to passenger
+        transaction.update(userDoc.reference, {
+          'tokens': FieldValue.increment(1),
+          'rides.joined': FieldValue.arrayRemove([rideId]),
+        });
+
+        // Remove token from driver
+        final driverId = rideDoc.data()?['driver_id'];
+        if (driverId != null && driverId.isNotEmpty) {
+          transaction.update(
+            _firestore.collection('users').doc(driverId),
+            {'tokens': FieldValue.increment(-1)},
+          );
+        }
+      });
+    } catch (e) {
+      throw 'Failed to leave ride: $e';
     }
   }
 

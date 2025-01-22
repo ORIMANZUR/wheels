@@ -7,7 +7,7 @@
     mergedManifest="C:\Users\orida\Desktop\wheels_app\build\app\intermediates\merged_manifest\release\AndroidManifest.xml"
     proguardFiles="C:\Users\orida\Desktop\wheels_app\build\app\intermediates\default_proguard_files\global\proguard-android.txt-7.3.0;C:\flutter\flutter\packages\flutter_tools\gradle\flutter_proguard_rules.pro;proguard-rules.pro"
     partialResultsDir="C:\Users\orida\Desktop\wheels_app\build\app\intermediates\lint_vital_partial_results\release\out"
-    desugaredMethodsFiles="C:\Users\orida\.gradle\caches\transforms-3\d9571a877bfab240140dd1ec74f193c7\transformed\D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="C:\Users\orida\.gradle\caches\transforms-3\5cb4d1bf7a2a5a7837531fab9078972f\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -35,6 +35,6 @@
       classOutputs="C:\Users\orida\Desktop\wheels_app\build\app\intermediates\javac\release\classes;C:\Users\orida\Desktop\wheels_app\build\app\tmp\kotlin-classes\release;C:\Users\orida\Desktop\wheels_app\build\app\kotlinToolingMetadata;C:\Users\orida\Desktop\wheels_app\build\app\intermediates\compile_and_runtime_not_namespaced_r_class_jar\release\R.jar"
       applicationId="com.example.wheels_app"
       generatedSourceFolders="C:\Users\orida\Desktop\wheels_app\build\app\generated\ap_generated_sources\release\out;C:\Users\orida\Desktop\wheels_app\build\app\generated\aidl_source_output_dir\release\out;C:\Users\orida\Desktop\wheels_app\build\app\generated\source\buildConfig\release;C:\Users\orida\Desktop\wheels_app\build\app\generated\renderscript_source_output_dir\release\out"
-      generatedResourceFolders="C:\Users\orida\Desktop\wheels_app\build\app\generated\res\rs\release;C:\Users\orida\Desktop\wheels_app\build\app\generated\res\resValues\release">
+      generatedResourceFolders="C:\Users\orida\Desktop\wheels_app\build\app\generated\res\google-services\release;C:\Users\orida\Desktop\wheels_app\build\app\generated\res\rs\release;C:\Users\orida\Desktop\wheels_app\build\app\generated\res\resValues\release">
   </mainArtifact>
 </variant>

@@ -41,46 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDQsZRPmx0a-_TPwqSXhfPAnh8bHpSqP0o',
-    appId: '1:544084308758:web:c03a9dab764beef6929637',
-    messagingSenderId: '544084308758',
-    projectId: 'wheels-app-updated',
-    authDomain: 'wheels-app-updated.firebaseapp.com',
-    storageBucket: 'wheels-app-updated.firebasestorage.app',
+    apiKey: 'AIzaSyAgvA6KEuWIzrLcUgZP_jFNFmFSJ7ai0gs',
+    appId: '1:826213863049:web:d0c04fcb40e32c15514058',
+    messagingSenderId: '826213863049',
+    projectId: 'wheels-new-app',
+    authDomain: 'wheels-new-app.firebaseapp.com',
+    storageBucket: 'wheels-new-app.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAahODFrZU-VFFfsykyKez5W-K_5LEMQ-I',
-    appId: '1:544084308758:android:8a5d2ae1a48e6130929637',
-    messagingSenderId: '544084308758',
-    projectId: 'wheels-app-updated',
-    storageBucket: 'wheels-app-updated.firebasestorage.app',
+    apiKey: 'AIzaSyDEU0Mp8HWSiC0uJSDYTR1LjLrRB48l6P8',
+    appId: '1:826213863049:android:b79b2c46817d57ca514058',
+    messagingSenderId: '826213863049',
+    projectId: 'wheels-new-app',
+    storageBucket: 'wheels-new-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDm6BaNHC8eDHALMcfXdu1pX1chFf10ws0',
-    appId: '1:544084308758:ios:bcaa37da921cef61929637',
-    messagingSenderId: '544084308758',
-    projectId: 'wheels-app-updated',
-    storageBucket: 'wheels-app-updated.firebasestorage.app',
+    apiKey: 'AIzaSyBXNPAOClIm2kXLMPfquK91jz_J80Y-vbc',
+    appId: '1:826213863049:ios:b3ad0181f0ffe3b6514058',
+    messagingSenderId: '826213863049',
+    projectId: 'wheels-new-app',
+    storageBucket: 'wheels-new-app.firebasestorage.app',
     iosBundleId: 'com.example.wheelsApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDm6BaNHC8eDHALMcfXdu1pX1chFf10ws0',
-    appId: '1:544084308758:ios:bcaa37da921cef61929637',
-    messagingSenderId: '544084308758',
-    projectId: 'wheels-app-updated',
-    storageBucket: 'wheels-app-updated.firebasestorage.app',
+    apiKey: 'AIzaSyBXNPAOClIm2kXLMPfquK91jz_J80Y-vbc',
+    appId: '1:826213863049:ios:b3ad0181f0ffe3b6514058',
+    messagingSenderId: '826213863049',
+    projectId: 'wheels-new-app',
+    storageBucket: 'wheels-new-app.firebasestorage.app',
     iosBundleId: 'com.example.wheelsApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDQsZRPmx0a-_TPwqSXhfPAnh8bHpSqP0o',
-    appId: '1:544084308758:web:2da237642f1b42e3929637',
-    messagingSenderId: '544084308758',
-    projectId: 'wheels-app-updated',
-    authDomain: 'wheels-app-updated.firebaseapp.com',
-    storageBucket: 'wheels-app-updated.firebasestorage.app',
+    apiKey: 'AIzaSyAgvA6KEuWIzrLcUgZP_jFNFmFSJ7ai0gs',
+    appId: '1:826213863049:web:97cc34c329b36c76514058',
+    messagingSenderId: '826213863049',
+    projectId: 'wheels-new-app',
+    authDomain: 'wheels-new-app.firebaseapp.com',
+    storageBucket: 'wheels-new-app.firebasestorage.app',
   );
+
 }

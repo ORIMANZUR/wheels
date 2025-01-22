@@ -127,6 +127,23 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
   }
 
   Future<void> _cancelRide() async {
+    final currentUser = authService.currentUser;
+    if (currentUser == null) return;
+
+    final isDriver = widget.ride.driverId == currentUser.uid;
+    final isPassenger = widget.ride.hasPassenger(currentUser.uid);
+
+    // Only allow driver or passenger to cancel
+    if (!isDriver && !isPassenger) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('You are not authorized to cancel this ride')),
+        );
+      }
+      return;
+    }
+
     final reason = await showDialog<String>(
       context: context,
       builder: (context) => _CancelDialog(),
@@ -151,6 +168,52 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
     }
   }
 
+  // Add new method for passengers to leave ride
+  Future<void> _leaveRide() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Ride'),
+        content: const Text(
+            'Are you sure you want to leave this ride? Your token will be refunded.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Leave Ride'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _ridesService.leaveRide(
+          widget.ride.id,
+          authService.currentUser!.uid,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Successfully left the ride')),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error leaving ride: $e')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = authService.currentUser;
@@ -161,11 +224,17 @@ class _RideDetailsScreenState extends State<RideDetailsScreen> {
       appBar: AppBar(
         title: const Text('Ride Details'),
         actions: [
-          if (widget.ride.status == RideStatus.pending ||
-              widget.ride.status == RideStatus.inProgress)
+          if (widget.ride.status == RideStatus.pending &&
+              isDriver) // Only driver can cancel
             IconButton(
               icon: const Icon(Icons.cancel),
               onPressed: _cancelRide,
+            ),
+          if (widget.ride.status == RideStatus.pending &&
+              isPassenger) // Passengers can leave
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: _leaveRide,
             ),
         ],
       ),

@@ -1,15 +1,15 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.orimanzur.wheels_app">
     <!-- Add these permission declarations -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="wheels_app"
+        android:label="wheels"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
-        <!-- Add Google Maps API key meta-data -->
+        <!-- Add Google Maps API key meta-data com.orimanzur.wheels_app  -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDCaN5vjNn0_3iaSM46_biQlhlGx0EthSc"/>
